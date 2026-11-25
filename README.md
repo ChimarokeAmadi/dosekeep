@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/ChimarokeAmadi/dosekeep/actions/workflows/ci.yml/badge.svg)](https://github.com/ChimarokeAmadi/dosekeep/actions/workflows/ci.yml)
 
-**Live:** _add the Vercel URL here_ · **Report:** [docs/REPORT.md](docs/REPORT.md) · **Demo video:** _add the Loom link here_
+**Live:** [dosekeep.vercel.app](https://dosekeep.vercel.app) · **Report:** [docs/REPORT.md](docs/REPORT.md) · **Demo video:** _add the Loom link here_
 
 DoseKeep helps small clinics keep patients on their treatment. It texts patients when a dose is due and the day before an appointment. Each patient gets a private link where they tick off their doses, with no app and no password. The clinic gets a dashboard that shows who is falling behind, so a nurse can call them before a missed week turns into a hospital visit.
 

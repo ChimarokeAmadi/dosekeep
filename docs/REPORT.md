@@ -2,8 +2,8 @@
 
 **Project report** · Chimaroke Amadi · GoMyCode MSC capstone · November 2026
 
-- **Live system:** _add your Vercel URL here after deploying_
-- **Source code:** _add your GitHub URL here_
+- **Live system:** https://dosekeep.vercel.app
+- **Source code:** https://github.com/ChimarokeAmadi/dosekeep
 
 ---
 
