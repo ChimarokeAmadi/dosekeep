@@ -2,21 +2,17 @@
 
 import { useActionState } from 'react';
 import { CopyLink } from './CopyLink';
+import { SubmitButton } from './SubmitButton';
 
 // A single button that runs a server action and shows its result (reset link, run reminders).
-export function ActionButton({ action, label, pendingLabel = 'Working…', confirmText }) {
-  const [state, formAction, pending] = useActionState(action, {});
+// `confirm` (optional) opens a confirmation pop-up first; see ConfirmDialog.
+export function ActionButton({ action, label, pendingLabel = 'Working…', confirm }) {
+  const [state, formAction] = useActionState(action, {});
   return (
-    <form
-      action={formAction}
-      className="action-button"
-      onSubmit={(e) => {
-        if (confirmText && !window.confirm(confirmText)) e.preventDefault();
-      }}
-    >
-      <button type="submit" className="button" disabled={pending}>
-        {pending ? pendingLabel : label}
-      </button>
+    <form action={formAction} className="action-button">
+      <SubmitButton className="button" pendingLabel={pendingLabel} confirm={confirm}>
+        {label}
+      </SubmitButton>
       {state.error && (
         <p role="alert" className="alert alert-error">
           {state.error}

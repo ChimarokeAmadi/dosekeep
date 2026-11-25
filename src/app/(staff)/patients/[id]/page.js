@@ -36,7 +36,15 @@ function RecordButton({ patientId, dose }) {
 function UndoButton({ patientId, dose }) {
   return (
     <form action={staffUnlogDoseAction.bind(null, patientId, String(dose.medicationId), dose.at.toISOString())} className="inline-form">
-      <SubmitButton pendingLabel="Saving…" confirmText={`Record ${dose.medication.name} at ${dose.time} as NOT taken?`}>
+      <SubmitButton
+        pendingLabel="Saving…"
+        confirm={{
+          title: 'Record this dose as missed?',
+          message: `${dose.medication.name} at ${dose.time} will no longer count as taken. Use this only if it was recorded by mistake.`,
+          confirmLabel: 'Record as missed',
+          tone: 'danger',
+        }}
+      >
         Record as missed
       </SubmitButton>
     </form>
@@ -72,7 +80,11 @@ export default async function PatientPage({ params }) {
           action={resetLinkAction.bind(null, id)}
           label="Send a new portal link"
           pendingLabel="Sending…"
-          confirmText="The current link will stop working. Send a new one?"
+          confirm={{
+            title: 'Send a new portal link?',
+            message: `The link ${patient.name.split(' ')[0]} has now will stop working, and a new one will be sent by SMS.`,
+            confirmLabel: 'Send new link',
+          }}
         />
       </div>
 
@@ -217,7 +229,15 @@ export default async function PatientPage({ params }) {
                       <td className="num">
                         {active && !m.stoppedAt ? (
                           <form action={stopMedicationAction.bind(null, id, String(m._id))} className="inline-form">
-                            <SubmitButton pendingLabel="Stopping…" confirmText={`Stop ${m.name}? Reminders for it end today.`}>
+                            <SubmitButton
+                              pendingLabel="Stopping…"
+                              confirm={{
+                                title: `Stop ${m.name}?`,
+                                message: 'It ends today and no more reminders are sent for it. Its history is kept.',
+                                confirmLabel: 'Stop medicine',
+                                tone: 'danger',
+                              }}
+                            >
                               Stop
                             </SubmitButton>
                           </form>

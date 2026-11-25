@@ -145,6 +145,22 @@ main.container { padding-top: 24px; padding-bottom: 48px; }
 .button.small { padding: 4px 10px; min-height: 32px; font-size: 0.85rem; }
 .button.link { border: 0; background: none; color: var(--accent); padding: 0; min-height: 0; font-weight: 500; }
 .button:disabled { opacity: 0.6; cursor: progress; }
+.button.danger { background: var(--danger); border-color: var(--danger); color: var(--surface); }
+.button.danger:hover { filter: brightness(0.92); color: var(--surface); }
+
+/* Confirmation pop-up (components/ConfirmDialog.js) */
+.dialog {
+  padding: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--ink);
+  width: min(420px, calc(100vw - 32px)); box-shadow: 0 12px 40px rgb(0 0 0 / 22%);
+  text-align: left; white-space: normal; font-weight: 400; font-size: 1rem;
+}
+.dialog::backdrop { background: rgb(15 20 19 / 55%); }
+.dialog[open] { animation: dialog-in 140ms ease-out; }
+@keyframes dialog-in { from { opacity: 0; transform: translateY(6px) scale(0.98); } }
+@media (prefers-reduced-motion: reduce) { .dialog[open] { animation: none; } }
+.dialog-body { padding: 20px; }
+.dialog-body p { color: var(--ink-2); margin: 0; font-size: 0.95rem; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
 .inline-form { display: inline; }
 .button-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 

@@ -22,7 +22,10 @@ export default async function StaffLayout({ children }) {
               {user.name} · {clinic.name}
             </span>
             <form action={logoutAction} className="inline-form">
-              <SubmitButton pendingLabel="Signing out…" confirmText="Sign out of DoseKeep?">
+              <SubmitButton
+                pendingLabel="Signing out…"
+                confirm={{ title: 'Sign out?', message: "You'll need your email and password to sign in again.", confirmLabel: 'Sign out' }}
+              >
                 Sign out
               </SubmitButton>
             </form>
