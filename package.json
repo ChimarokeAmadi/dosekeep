@@ -1,0 +1,35 @@
+{
+  "name": "dosekeep",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "dev:local": "node scripts/dev-local.js",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "test": "node --test",
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=\"src/**\" --test-coverage-lines=85",
+    "seed": "node scripts/seed.js",
+    "check": "npm run lint && npm test && npm run build"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "jose": "^6.2.18",
+    "mongodb": "^7.9.1",
+    "next": "16.4.6",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "eslint": "^9",
+    "eslint-config-next": "16.4.6",
+    "mongodb-memory-server": "^11.4.0"
+  },
+  "type": "module",
+  "description": "Medication and clinic-visit reminders with adherence tracking for small clinics",
+  "engines": {
+    "node": ">=20.19"
+  }
+}
