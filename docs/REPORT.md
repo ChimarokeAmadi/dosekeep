@@ -81,10 +81,10 @@ flowchart LR
       S[Clinic staff<br/>browser]
       P[Patient<br/>any phone]
     end
-    subgraph Vercel["Vercel (region fra1)"]
+    subgraph Vercel["Vercel (region iad1)"]
       N["Next.js 16 app<br/>Server Components + Server Actions<br/>Route Handlers /api/*"]
     end
-    subgraph Atlas["MongoDB Atlas (Frankfurt)"]
+    subgraph Atlas["MongoDB Atlas (us-east-1)"]
       DB[(dosekeep database)]
     end
     GH["GitHub Actions<br/>CI + 15-min schedule"]
@@ -122,7 +122,7 @@ The services take the database as their first argument (`logDose(db, {...})`) in
 | Choice | Alternatives considered | Why |
 |---|---|---|
 | **Next.js 16** (React 19), JavaScript | Express API + React SPA; Django | One codebase and one deployment for UI and API. Server Components keep patient data on the server and ship little JavaScript, which matters on slow mobile networks. Server Actions remove a whole layer of hand-written API endpoints for staff forms. |
-| **MongoDB Atlas** | PostgreSQL (e.g. Neon, Supabase) | The data is document-shaped (a medication with an array of times; a patient with optional fields). The access patterns are all "by clinic, by patient, by date range", which compound indexes serve directly; Atlas adds a free tier and a Frankfurt region next to the functions. PostgreSQL would have worked equally well. |
+| **MongoDB Atlas** | PostgreSQL (e.g. Neon, Supabase) | The data is document-shaped (a medication with an array of times; a patient with optional fields). The access patterns are all "by clinic, by patient, by date range", which compound indexes serve directly; Atlas adds a free tier in the same AWS region as the functions. PostgreSQL would have worked equally well. |
 | **Vercel** | Render, Azure App Service | Built for Next.js: zero-config builds, a preview deployment for every pull request, HTTPS and a CDN included, free for this scale. Its limitation (cron only once a day on the free plan) is solved with GitHub Actions; see 8.2. |
 | **Africa's Talking** for SMS | Twilio | Direct routes to Nigerian networks, local sender IDs and lower prices in Africa; it has a free sandbox for testing. The SMS layer is one small module behind an interface, so switching provider is a one-file change. |
 | **jose** (JWT), **bcryptjs**, **zod** | NextAuth/Auth.js; Joi | A signed session cookie is all a staff login needs; a full auth framework would add more than it saves. bcrypt is the standard for password hashing. zod validates every form on the server and produces readable per-field messages. |
@@ -277,8 +277,8 @@ GitHub Actions (`.github/workflows/ci.yml`) runs lint and tests on Node 20 and 2
 
 ### 8.2 Cloud setup
 
-- **Vercel**, region `fra1` (Frankfurt). Serverless functions scale to zero, and HTTPS and the CDN are automatic.
-- **MongoDB Atlas** free M0 cluster in AWS Frankfurt (`eu-central-1`), the same region as the functions. Each database round trip stays within one region (a few milliseconds), which matters because a dashboard makes several. Access is restricted to a dedicated database user with read/write rights on one database.
+- **Vercel**, region `iad1` (Washington, D.C.). Serverless functions scale to zero, and HTTPS and the CDN are automatic.
+- **MongoDB Atlas** free M0 cluster in AWS N. Virginia (`us-east-1`), the same region as the functions. Each database round trip stays within one region (a few milliseconds), which matters because a dashboard makes several. Being next to the database matters more than being next to the user, since a page needs one round trip from the user but several to the database. Moving both closer to Nigeria later is a configuration change. Access is restricted to a dedicated database user with read/write rights on one database.
 - **Scheduling:** Vercel's free plan only allows cron jobs once a day, which is too slow for dose reminders. Instead, `.github/workflows/reminders.yml` calls the reminder endpoint every 15 minutes with the secret. `vercel.json` keeps one daily Vercel Cron as a backup, and because reminders are idempotent, the two never conflict. GitHub's scheduler can start runs several minutes late; the one-hour look-back absorbs that. On a paid plan, the GitHub schedule could be replaced by Vercel Cron every 15 minutes, with no code change.
 - **Configuration:** all settings are environment variables documented in `.env.example`: database URI, session and cron secrets, app URL and SMS provider. With `SMS_PROVIDER=log` (the default), messages are recorded and visible on the Reminders page but not sent, which is useful for demos. With `africastalking`, they are sent for real.
 

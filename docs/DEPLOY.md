@@ -19,7 +19,7 @@ Open the **Actions** tab: the CI run (lint, tests on Node 20 and 22, build) shou
 
 ## 2. Create the database (MongoDB Atlas)
 
-1. On cloud.mongodb.com, **Create** a cluster: choose **M0 (Free)**, provider **AWS**, region **Frankfurt (eu-central-1)**. That's the same region as the Vercel functions, so each database round trip is short.
+1. On cloud.mongodb.com, **Create** a cluster: choose **M0 (Free)**, provider **AWS**, region **N. Virginia (us-east-1)**. That's the same AWS region as the Vercel functions (`iad1`), so each database round trip is short. If you already have a free cluster, reuse it: Atlas allows one free cluster per project, and DoseKeep keeps its data in its own `dosekeep` database. If your cluster is in another region, change `regions` in `vercel.json` to the Vercel region next to it.
 2. **Database Access** → Add a database user, for example `dosekeep-app`, with a generated password. Role: *Read and write to any database* (or, better, `readWrite` on `dosekeep` only).
 3. **Network Access** → Add IP address → `0.0.0.0/0`. Vercel's functions don't have fixed IP addresses, so the database is protected by its username and password, which are long and random, plus TLS.
 4. **Connect** → Drivers → copy the connection string and put your user's password in it.
@@ -51,7 +51,7 @@ Keep them somewhere safe (a password manager). Never commit them.
 4. Settings → Environment Variables → add `APP_URL` = that address (no slash at the end). Then Deployments → ⋯ → **Redeploy**, so that patient links use the real address.
 5. Check: open `https://<your-app>/api/health`. It should show `{"status":"ok","database":"up",...}`.
 
-`vercel.json` already sets the region to `fra1` and a daily backup cron job. Vercel sends the `CRON_SECRET` with it automatically.
+`vercel.json` already sets the region to `iad1` (Washington, D.C., next to Atlas's us-east-1) and a daily backup cron job. Vercel sends the `CRON_SECRET` with it automatically.
 
 ## 5. Load the demo clinic
 
