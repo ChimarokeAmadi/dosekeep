@@ -1,20 +1,33 @@
 name: Production smoke test
 
-# Runs after Vercel reports a successful production deployment.
-on: deployment_status
+# After each merge to main, Vercel builds and deploys production. This waits until the
+# live site reports the merged commit (from /api/health), then checks that it works.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   smoke:
-    if: github.event.deployment_status.state == 'success' && github.event.deployment_status.environment == 'Production'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      APP_URL: ${{ secrets.APP_URL }}
     steps:
-      - name: Health check (app and database)
+      - name: Wait for the new deployment
         run: |
-          URL="${{ github.event.deployment_status.environment_url }}"
-          curl -fsS --retry 5 --retry-delay 5 "$URL/api/health"
+          if [ -z "$APP_URL" ]; then echo "Set the APP_URL repository secret."; exit 1; fi
+          for i in $(seq 1 60); do
+            COMMIT=$(curl -fsS "$APP_URL/api/health" | jq -r '.commit // empty' || true)
+            if [ "$COMMIT" = "$GITHUB_SHA" ]; then echo "Live: $COMMIT"; exit 0; fi
+            echo "Waiting for $GITHUB_SHA (live: ${COMMIT:-unknown})"; sleep 10
+          done
+          echo "The deployment did not go live within 10 minutes"; exit 1
+      - name: Health check (app and database)
+        run: curl -fsS "$APP_URL/api/health"
       - name: Pages respond
         run: |
-          URL="${{ github.event.deployment_status.environment_url }}"
-          curl -fsS -o /dev/null "$URL/"
-          curl -fsS -o /dev/null "$URL/login"
-          test "$(curl -s -o /dev/null -w '%{http_code}' "$URL/api/cron/reminders")" = "401"
+          curl -fsS -o /dev/null "$APP_URL/"
+          curl -fsS -o /dev/null "$APP_URL/login"
+      - name: Cron endpoint refuses requests without the secret
+        run: test "$(curl -s -o /dev/null -w '%{http_code}' "$APP_URL/api/cron/reminders")" = "401"
