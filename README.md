@@ -25,7 +25,7 @@ src/app         pages, the patient portal and the API routes
 src/server      session cookie, login check, server actions
 src/services    the use cases: patients, medicines, doses, dashboard, reminders
 src/lib         pure logic: time zones, dose schedule, adherence, validation, SMS client
-test/           25 tests, against a real in-memory MongoDB
+test/           26 tests, against a real in-memory MongoDB
 docs/           report, deployment guide, demo script
 ```
 
