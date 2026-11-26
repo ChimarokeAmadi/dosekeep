@@ -250,7 +250,7 @@ The project has **25 automated tests**:
 - **Unit tests** for the pure logic: time-zone conversion (including daylight saving), dose schedules, dose windows, adherence maths, validation, phone normalisation, session tokens and the SMS client. The SMS client is tested with a fake `fetch`.
 - **Integration tests** for every service, against a real in-memory MongoDB 8: login lockout, admin-only actions, isolation between clinics, portal link reset and hashing, dose windows and idempotent logging, duplicate medicines, at-risk detection, reminders sent exactly once, and failed SMS recorded with the error.
 
-The tests cover **94.7% of the lines** of the logic layers (`src/lib` and `src/services`). The pages were tested end to end with a headless-Chrome script: wrong and right logins, invalid and valid forms, running reminders, the patient portal at phone size, and a broken link, with no console errors allowed. It caught two real problems before release: chart text unreadable on phones, and the same medicine could be added twice, doubling reminders.
+The tests cover **94.8% of the lines** of the logic layers (`src/lib` and `src/services`). The pages were tested end to end with a headless-Chrome script: wrong and right logins, invalid and valid forms, running reminders, the patient portal at phone size, and a broken link, with no console errors allowed. It caught two real problems before release: chart text unreadable on phones, and the same medicine could be added twice, doubling reminders.
 
 ESLint runs with Next.js's recommended rules plus `eqeqeq`, `no-var` and `prefer-const`, and reports 0 problems.
 
@@ -288,7 +288,7 @@ The deployment guide is in [DEPLOY.md](DEPLOY.md).
 
 - **Implemented:** every functional requirement in section 3.
 - **Demo data:** a seed script creates a demo clinic with 8 patients and 5 weeks of realistic history (different adherence levels, worse at weekends), so the dashboard shows real patterns: in the sample data, 3 of 8 patients are flagged at risk.
-- **Tests:** 25 tests pass, coverage of the logic is 94.7%, and lint reports 0 problems.
+- **Tests:** 26 tests pass, coverage of the logic is 94.8%, and lint reports 0 problems.
 
 The most important result is the design itself:
 - adherence is **derived** from the schedule and the dose logs instead of being maintained by background jobs;
