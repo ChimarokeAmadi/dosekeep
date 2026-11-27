@@ -28,16 +28,17 @@ function random(seed) {
   };
 }
 
-// Numbers in the 0700 000 range are not assigned to real subscribers.
+// Realistic-looking Nigerian numbers. They could belong to real people, so the seed marks these
+// patients as samples and DoseKeep never sends them a real SMS (see sendMessage).
 const PATIENTS = [
-  { name: 'Chidi Okafor', phone: '07000000101', condition: 'Type 2 diabetes', adherence: 0.95, meds: [['Metformin', '500 mg', ['08:00', '20:00'], 'With food']] },
-  { name: 'Aisha Bello', phone: '07000000102', condition: 'Hypertension', adherence: 0.62, meds: [['Amlodipine', '5 mg', ['08:00']], ['Lisinopril', '10 mg', ['20:00']]] },
-  { name: 'Tunde Adeyemi', phone: '07000000103', condition: 'HIV', adherence: 0.98, meds: [['TLD', '1 tablet', ['21:00'], 'Same time every night']] },
-  { name: 'Ngozi Eze', phone: '07000000104', condition: 'Hypertension', adherence: 0.71, meds: [['Nifedipine', '20 mg', ['07:00', '19:00']]] },
-  { name: 'Emeka Nwosu', phone: '07000000105', condition: 'Tuberculosis', adherence: 0.88, meds: [['RHZE', '4 tablets', ['07:00'], 'Before breakfast']] },
-  { name: 'Fatima Sule', phone: '07000000106', condition: 'Asthma', adherence: 0.83, meds: [['Montelukast', '10 mg', ['21:00']]] },
-  { name: 'Kelechi Obi', phone: '07000000107', condition: 'Type 2 diabetes', adherence: 0.55, meds: [['Metformin', '850 mg', ['08:00', '14:00', '20:00']], ['Glimepiride', '2 mg', ['08:00']]] },
-  { name: 'Yetunde Balogun', phone: '07000000108', condition: 'Epilepsy', adherence: 0.92, meds: [['Levetiracetam', '500 mg', ['08:00', '20:00']]] },
+  { name: 'Chidi Okafor', phone: '08034127759', condition: 'Type 2 diabetes', adherence: 0.95, meds: [['Metformin', '500 mg', ['08:00', '20:00'], 'With food']] },
+  { name: 'Aisha Bello', phone: '08061583204', condition: 'Hypertension', adherence: 0.62, meds: [['Amlodipine', '5 mg', ['08:00']], ['Lisinopril', '10 mg', ['20:00']]] },
+  { name: 'Tunde Adeyemi', phone: '08139026671', condition: 'HIV', adherence: 0.98, meds: [['TLD', '1 tablet', ['21:00'], 'Same time every night']] },
+  { name: 'Ngozi Eze', phone: '07058314420', condition: 'Hypertension', adherence: 0.71, meds: [['Nifedipine', '20 mg', ['07:00', '19:00']]] },
+  { name: 'Emeka Nwosu', phone: '08167740938', condition: 'Tuberculosis', adherence: 0.88, meds: [['RHZE', '4 tablets', ['07:00'], 'Before breakfast']] },
+  { name: 'Fatima Sule', phone: '09032258167', condition: 'Asthma', adherence: 0.83, meds: [['Montelukast', '10 mg', ['21:00']]] },
+  { name: 'Kelechi Obi', phone: '08124906315', condition: 'Type 2 diabetes', adherence: 0.55, meds: [['Metformin', '850 mg', ['08:00', '14:00', '20:00']], ['Glimepiride', '2 mg', ['08:00']]] },
+  { name: 'Yetunde Balogun', phone: '07036651829', condition: 'Epilepsy', adherence: 0.92, meds: [['Levetiracetam', '500 mg', ['08:00', '20:00']]] },
 ];
 
 export async function seed(db, { password, now = new Date(), log = console.log } = {}) {
@@ -61,6 +62,7 @@ export async function seed(db, { password, now = new Date(), log = console.log }
 
   for (const p of PATIENTS) {
     const { patient, portalLink } = await createPatient(db, sender, { clinic, input: p, appUrl: getConfig().appUrl, now: zonedToUtc(start, '09:00', tz) });
+    await db.collection('patients').updateOne({ _id: patient._id }, { $set: { sample: true } });
     links.push([p.name, portalLink]);
 
     for (const [name, dosage, times, instructions] of p.meds) {
