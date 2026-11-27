@@ -38,7 +38,7 @@ npm install
 npm run dev:local
 ```
 
-Then open http://localhost:3000 and sign in as `demo@dosekeep.app` with the password `dosekeep-demo`. The script prints a private portal link for each demo patient.
+Then open http://localhost:3000 and sign in as `ada.nnamdi@sunriseclinic.ng` with the password `sunrise-local-2026`. The script prints a private portal link for each sample patient.
 
 ```bash
 npm run lint            # ESLint

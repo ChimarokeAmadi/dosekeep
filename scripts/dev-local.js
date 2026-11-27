@@ -1,5 +1,5 @@
 // Runs the whole app locally with no setup: an in-memory MongoDB (data kept in .data/),
-// the demo clinic, and `next dev`.   npm run dev:local
+// the sample clinic, and `next dev`.   npm run dev:local
 //
 // Pass --prod to run the production build instead (npm run build first).
 
@@ -8,9 +8,9 @@ import { mkdirSync } from 'node:fs';
 import { MongoClient } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { ensureIndexes } from '../src/lib/db.js';
-import { DEMO_EMAIL, seed } from './seed.js';
+import { ADMIN_EMAIL, seed } from './seed.js';
 
-const PASSWORD = process.env.DEMO_PASSWORD || 'dosekeep-demo';
+const PASSWORD = process.env.SEED_PASSWORD || process.env.DEMO_PASSWORD || 'sunrise-local-2026';
 const prod = process.argv.includes('--prod');
 
 mkdirSync('.data/mongo', { recursive: true });
@@ -30,11 +30,11 @@ Object.assign(process.env, env);
 const client = await MongoClient.connect(uri);
 const db = client.db('dosekeep');
 await ensureIndexes(db);
-if (!(await db.collection('users').findOne({ email: DEMO_EMAIL }))) {
+if (!(await db.collection('users').findOne({ email: ADMIN_EMAIL }))) {
   await seed(db, { password: PASSWORD });
   console.log(`  (local password: ${PASSWORD})`);
 } else {
-  console.log(`Using existing local data. Sign in as ${DEMO_EMAIL}. Delete .data/ to start fresh.`);
+  console.log(`Using existing local data. Sign in as ${ADMIN_EMAIL}. Delete .data/ to start fresh.`);
 }
 await client.close();
 

@@ -1,7 +1,7 @@
-// Creates a demo clinic with 8 patients and 5 weeks of realistic dose history,
-// so the dashboard has something to show. Safe to run again: it replaces the demo clinic.
+// Creates a sample clinic with 8 patients and 5 weeks of realistic dose history,
+// so the dashboard has something to show. Safe to run again: it replaces the sample clinic.
 //
-//   node --env-file=.env.local scripts/seed.js     (or: npm run seed, with MONGODB_URI set)
+//   node --env-file=.env.local scripts/seed.js     (or: npm run seed, with MONGODB_URI and SEED_PASSWORD set)
 
 import { MongoClient } from 'mongodb';
 import { getConfig } from '../src/lib/config.js';
@@ -12,8 +12,10 @@ import { addStaff, registerClinic } from '../src/services/accounts.js';
 import { createPatient } from '../src/services/patients.js';
 import { addAppointment, addMedication } from '../src/services/medications.js';
 
-export const DEMO_EMAIL = 'demo@dosekeep.app';
-const NURSE_EMAIL = 'nurse@dosekeep.app';
+export const ADMIN_EMAIL = 'ada.nnamdi@sunriseclinic.ng';
+const NURSE_EMAIL = 'bisi.lawal@sunriseclinic.ng';
+// The sample clinic's admin email in earlier versions; its clinic is removed on the next seed.
+const PREVIOUS_ADMIN_EMAILS = ['demo@dosekeep.app'];
 
 // Same "random" history every run.
 function random(seed) {
@@ -39,16 +41,15 @@ const PATIENTS = [
 ];
 
 export async function seed(db, { password, now = new Date(), log = console.log } = {}) {
-  const old = await db.collection('users').findOne({ email: DEMO_EMAIL });
-  if (old) {
-    const clinicId = old.clinicId;
+  const olds = await db.collection('users').find({ email: { $in: [ADMIN_EMAIL, ...PREVIOUS_ADMIN_EMAILS] } }).toArray();
+  for (const { clinicId } of olds) {
     await Promise.all(
       ['users', 'patients', 'medications', 'doseLogs', 'appointments', 'reminders'].map((c) => db.collection(c).deleteMany({ clinicId })),
     );
     await db.collection('clinics').deleteOne({ _id: clinicId });
   }
 
-  const admin = await registerClinic(db, { clinicName: 'Sunrise Family Clinic', timezone: 'Africa/Lagos', name: 'Dr. Ada Nnamdi', email: DEMO_EMAIL, password }, { rounds: 10 });
+  const admin = await registerClinic(db, { clinicName: 'Sunrise Family Clinic', timezone: 'Africa/Lagos', name: 'Dr. Ada Nnamdi', email: ADMIN_EMAIL, password }, { rounds: 10 });
   await addStaff(db, admin, { name: 'Nurse Bisi Lawal', email: NURSE_EMAIL, password, role: 'staff' }, { rounds: 10 });
   const clinic = await db.collection('clinics').findOne({ name: 'Sunrise Family Clinic' }, { sort: { _id: -1 } });
   const tz = clinic.timezone;
@@ -98,8 +99,8 @@ export async function seed(db, { password, now = new Date(), log = console.log }
     book(4, -3, '09:00', 'Blood pressure review', 'missed'),
   ]);
 
-  log(`Demo clinic ready: ${clinic.name}`);
-  log(`  admin: ${DEMO_EMAIL}   staff: ${NURSE_EMAIL}   password: (the one you set)`);
+  log(`Sample clinic ready: ${clinic.name}`);
+  log(`  admin: ${ADMIN_EMAIL}   staff: ${NURSE_EMAIL}   password: (the one you set)`);
   log('  patient portal links:');
   for (const [name, link] of links) log(`    ${name.padEnd(16)} ${link}`);
   return { clinic, links };
@@ -107,9 +108,10 @@ export async function seed(db, { password, now = new Date(), log = console.log }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const { mongodbUri, dbName } = getConfig();
-  const password = process.env.DEMO_PASSWORD;
+  // DEMO_PASSWORD is the old name, still accepted.
+  const password = process.env.SEED_PASSWORD || process.env.DEMO_PASSWORD;
   if (!mongodbUri || !password || password.length < 10) {
-    console.error('Set MONGODB_URI and DEMO_PASSWORD (at least 10 characters).');
+    console.error('Set MONGODB_URI and SEED_PASSWORD (at least 10 characters).');
     process.exit(1);
   }
   const client = await MongoClient.connect(mongodbUri);

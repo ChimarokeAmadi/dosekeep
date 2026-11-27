@@ -280,14 +280,14 @@ GitHub Actions (`.github/workflows/ci.yml`) runs lint and tests on Node 20 and 2
 - **Vercel**, region `iad1` (Washington, D.C.). Serverless functions scale to zero, and HTTPS and the CDN are automatic.
 - **MongoDB Atlas** free M0 cluster in AWS N. Virginia (`us-east-1`), the same region as the functions. Each database round trip stays within one region (a few milliseconds), which matters because a dashboard makes several. Being next to the database matters more than being next to the user, since a page needs one round trip from the user but several to the database. Moving both closer to Nigeria later is a configuration change. Access is restricted to a dedicated database user with read/write rights on one database.
 - **Scheduling:** Vercel's free plan only allows cron jobs once a day, which is too slow for dose reminders. Instead, `.github/workflows/reminders.yml` calls the reminder endpoint every 15 minutes with the secret. `vercel.json` keeps one daily Vercel Cron as a backup, and because reminders are idempotent, the two never conflict. GitHub's scheduler can start runs several minutes late; the one-hour look-back absorbs that. On a paid plan, the GitHub schedule could be replaced by Vercel Cron every 15 minutes, with no code change.
-- **Configuration:** all settings are environment variables documented in `.env.example`: database URI, session and cron secrets, app URL and SMS provider. With `SMS_PROVIDER=log` (the default), messages are recorded and visible on the Reminders page but not sent, which is useful for demos. With `africastalking`, they are sent for real.
+- **Configuration:** all settings are environment variables documented in `.env.example`: database URI, session and cron secrets, app URL and SMS provider. With `SMS_PROVIDER=log` (the default), messages are recorded and visible on the Reminders page but not sent, which is useful for testing. With `africastalking`, they are sent for real.
 
 The deployment guide is in [DEPLOY.md](DEPLOY.md).
 
 ## 9. Results
 
 - **Implemented:** every functional requirement in section 3.
-- **Demo data:** a seed script creates a demo clinic with 8 patients and 5 weeks of realistic history (different adherence levels, worse at weekends), so the dashboard shows real patterns: in the sample data, 3 of 8 patients are flagged at risk.
+- **Sample data:** a seed script creates a sample clinic with 8 patients and 5 weeks of realistic history (different adherence levels, worse at weekends), so the dashboard shows real patterns: in the sample data, 3 of 8 patients are flagged at risk.
 - **Tests:** 26 tests pass, coverage of the logic is 94.8%, and lint reports 0 problems.
 
 The most important result is the design itself:

@@ -1,5 +1,5 @@
 // SMS reaches patients on any phone, including feature phones without data.
-// "log" sends nothing (messages only appear on the Reminders page): good for demos and tests.
+// "log" sends nothing (messages only appear on the Reminders page): good for testing.
 // "africastalking" sends real SMS through Africa's Talking, which covers Nigerian networks.
 
 export function createSmsSender(config, fetchImpl = globalThis.fetch) {

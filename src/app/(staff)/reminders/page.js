@@ -22,7 +22,7 @@ export default async function RemindersPage() {
           <h1>Reminders</h1>
           <p>
             Every SMS DoseKeep sent for {clinic.name}. They go out automatically every 15 minutes.{' '}
-            {provider === 'log' && <strong>Demo mode: messages are recorded here but not actually sent.</strong>}
+            {provider === 'log' && <strong>Test mode: SMS sending is turned off, so messages are recorded here but not sent.</strong>}
           </p>
         </div>
         {user.role === 'admin' && <ActionButton action={runRemindersAction} label="Run reminders now" pendingLabel="Running…" />}
