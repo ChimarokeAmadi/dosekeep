@@ -53,16 +53,16 @@ Keep them somewhere safe (a password manager). Never commit them.
 
 `vercel.json` already sets the region to `iad1` (Washington, D.C., next to Atlas's us-east-1) and a daily backup cron job. Vercel sends the `CRON_SECRET` with it automatically.
 
-## 5. Load the demo clinic
+## 5. Load the sample clinic
 
 From your Mac, using the Atlas connection string (the quotes matter):
 
 ```bash
 cd ~/Desktop/GMC-MSC/dosekeep
-MONGODB_URI='mongodb+srv://…' APP_URL='https://dosekeep.vercel.app' DEMO_PASSWORD='choose-a-demo-password' npm run seed
+MONGODB_URI='mongodb+srv://…' APP_URL='https://dosekeep.vercel.app' SEED_PASSWORD='choose-a-password' npm run seed
 ```
 
-It prints the demo logins (`demo@dosekeep.app`, the admin, and `nurse@dosekeep.app`, staff) and a portal link for each of the 8 demo patients. Keep the output: you'll use a portal link in the video. You can run it again at any time to reset the demo.
+It prints the clinic logins (`ada.nnamdi@sunriseclinic.ng`, the admin, and `bisi.lawal@sunriseclinic.ng`, staff) and a portal link for each of the 8 sample patients. Keep the output: you'll use a portal link in the video. You can run it again at any time to reset the sample clinic.
 
 ## 6. Turn on the 15-minute reminders
 
@@ -92,7 +92,7 @@ Put the live URL and the GitHub URL at the top of `docs/REPORT.md` and in the RE
 
 ```bash
 npm install
-npm run dev:local     # in-memory MongoDB + demo data + the app on http://localhost:3000
+npm run dev:local     # in-memory MongoDB + sample data + the app on http://localhost:3000
 ```
 
-Sign in as `demo@dosekeep.app` with the password `dosekeep-demo`. The data is kept in `.data/`; delete that folder to start fresh. To run against Atlas instead, copy `.env.example` to `.env.local`, fill it in, and run `npm run dev`.
+Sign in as `ada.nnamdi@sunriseclinic.ng` with the password `sunrise-local-2026`. The data is kept in `.data/`; delete that folder to start fresh. To run against Atlas instead, copy `.env.example` to `.env.local`, fill it in, and run `npm run dev`.

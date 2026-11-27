@@ -152,7 +152,7 @@ export async function addStaffAction(_prev, formData) {
   });
 }
 
-// The scheduled job calls /api/cron/reminders; this button lets an admin run it now (useful in a demo).
+// The scheduled job calls /api/cron/reminders; this button lets an admin run it now (useful when testing).
 export async function runRemindersAction() {
   const { db, user } = await requireStaff();
   return attempt(null, async () => {
