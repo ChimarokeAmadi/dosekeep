@@ -58,6 +58,7 @@ export async function runReminders(db, sender, { now = new Date() } = {}) {
         patientId: patient._id,
         kind: 'dose',
         to: patient.phone,
+        sample: patient.sample === true,
         body: doseText(clinic, patient, dose),
         now,
       });
@@ -73,6 +74,7 @@ export async function runReminders(db, sender, { now = new Date() } = {}) {
         patientId: patient._id,
         kind: 'appointment',
         to: patient.phone,
+        sample: patient.sample === true,
         body: appointmentText(clinic, patient, appointment),
         now,
       });

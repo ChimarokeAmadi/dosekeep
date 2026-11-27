@@ -19,6 +19,7 @@ async function sendPortalLink(db, sender, { patient, clinic, token, appUrl, now 
     patientId: patient._id,
     kind: 'link',
     to: patient.phone,
+    sample: patient.sample === true,
     body: text(link),
     storedBody: text('[private link]'),
     now,

@@ -209,6 +209,22 @@ describe('reminders', () => {
     assert.equal(morning.dose.sent, 0);
   });
 
+  test('sample patients are never sent a real SMS: reminders and new links are only recorded', async () => {
+    const { clinic, patient } = await clinicWithPatient();
+    await ctx.db.collection('patients').updateOne({ _id: patient._id }, { $set: { sample: true } });
+    const earlier = (await ctx.db.collection('reminders').find({ patientId: patient._id }).toArray()).map((m) => String(m._id));
+    const realSender = fakeSender();
+
+    const result = await runReminders(ctx.db, realSender, { now: new Date('2026-11-24T18:50:00Z') });
+    assert.equal(result.dose.sent, 1);
+    await resetPortalLink(ctx.db, realSender, { clinic, patientId: String(patient._id), appUrl: APP_URL, now: new Date(NOW.getTime() + 60_000) });
+
+    assert.equal(realSender.sent.length, 0);
+    const recorded = (await ctx.db.collection('reminders').find({ patientId: patient._id }).toArray()).filter((m) => !earlier.includes(String(m._id)));
+    assert.deepEqual(recorded.map((m) => m.kind).sort(), ['dose', 'link']);
+    assert.ok(recorded.every((m) => m.provider === 'log' && m.status === 'sent'));
+  });
+
   test('a failed SMS is recorded with its error', async () => {
     await clinicWithPatient();
     const result = await runReminders(ctx.db, fakeSender({ fail: true }), { now: new Date('2026-11-24T18:50:00Z') });

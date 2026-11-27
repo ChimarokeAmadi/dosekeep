@@ -3,7 +3,12 @@ import { isDuplicateKey } from '../lib/db.js';
 // Every SMS goes through here. The unique `key` makes sending idempotent: if two
 // reminder runs overlap, only the first one to insert the key sends the message.
 // `storedBody` lets us keep a version without secrets (the portal link) in the database.
-export async function sendMessage(db, sender, { key, clinicId, patientId, kind, to, body, storedBody = body, now = new Date() }) {
+// `sample` is set for the seeded sample patients: their numbers may belong to real people,
+// so their messages are only recorded, never sent, whatever SMS provider is configured.
+const RECORD_ONLY = { provider: 'log', send: async () => ({ id: null }) };
+
+export async function sendMessage(db, sender, { key, clinicId, patientId, kind, to, body, storedBody = body, sample = false, now = new Date() }) {
+  if (sample) sender = RECORD_ONLY;
   const reminders = db.collection('reminders');
   let id;
   try {
